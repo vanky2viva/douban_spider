@@ -9,7 +9,7 @@ class DoubanSpiderSpider(scrapy.Spider):
     allowed_domains = ['movie.douban.com']
     #入口URL
     start_urls = ['http://movie.douban.com/top250']
-
+    #默认解析规则
     def parse(self, response):
         movie_list = response.xpath("//div[@class='article']//ol[@class='grid_view']/li")
         for i_item in movie_list:
@@ -23,4 +23,9 @@ class DoubanSpiderSpider(scrapy.Spider):
             douban_item['star'] = i_item.xpath(".//span[@class='rating_num']/text()").extract_first()
             douban_item['evaluate'] = i_item.xpath(".//span[4]/text()").extract_first()
             douban_item['describe'] = i_item.xpath(".//p/span[1]/text()").extract_first()
+            #需要将数据yeild到piplines中
             yield douban_item
+        next_link = response.xpath("//span[@class='next']/link/@href").extract()
+        if next_link:
+            next_link = next_link[0]
+            yield scrapy.Request("http://movie.douban.com/top250"+next_link,callback=self.parse)
