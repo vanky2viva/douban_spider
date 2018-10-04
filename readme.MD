@@ -10,3 +10,4 @@ scrapy genspider name_spider+域名
   xpath制定爬虫要抓取的数据
 4 存储数据：
   导出csv，json。或存储到mongodb
+tips: 中间件中编写完规则后 在setting中启用
